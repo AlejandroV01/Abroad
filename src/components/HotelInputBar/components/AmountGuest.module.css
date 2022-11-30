@@ -1,0 +1,17 @@
+.staticContainer {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: 12px;
+}
+
+.guests {
+  font-weight: 700;
+}
+.information * {
+  margin: 0;
+}
+
+.information {
+  text-align: start;
+}
