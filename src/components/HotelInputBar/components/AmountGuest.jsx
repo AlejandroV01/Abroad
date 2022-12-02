@@ -51,7 +51,7 @@ const AmountGuest = () => {
   const speaker = (
     <Popover>
       <div className={styles.infoRow}>
-        <h3>Adults</h3>
+        <h3>Adults ADD APPLY BUTTON and REST</h3>
         <div className={styles.counter}>
           <IconButton icon={<MinusIcon />} circle size='lg' onClick={removeAdult} />
           <span>{numberOfAdults}</span>
