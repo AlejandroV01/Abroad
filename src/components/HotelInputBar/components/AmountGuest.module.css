@@ -15,3 +15,25 @@
 .information {
   text-align: start;
 }
+
+.buttonRow {
+  display: flex;
+  justify-content: space-between;
+}
+.popover {
+  width: 325px;
+}
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+.numberDiv {
+  width: 20px;
+  text-align: center;
+}
+
+.counter {
+  display: flex;
+  align-items: center;
+}

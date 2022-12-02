@@ -1,17 +1,18 @@
 import MinusIcon from '@rsuite/icons/Minus'
-import PeopleFliterIcon from '@rsuite/icons/PeopleFliter'
+import PeopleFilterIcon from '@rsuite/icons/PeopleFliter'
 import PlusIcon from '@rsuite/icons/Plus'
 import React, { useEffect, useState } from 'react'
 import { Button, IconButton, Popover, Whisper } from 'rsuite'
 import styles from './AmountGuest.module.css'
-const PeopleIcon = ({ size }) => <PeopleFliterIcon style={{ fontSize: size }} />
+const PeopleIcon = ({ size }) => <PeopleFilterIcon style={{ fontSize: size }} />
 
 const AmountGuest = () => {
   const [numberOfAdults, setNumberOfAdults] = useState(2)
   const [numberOfChildren, setNumberOfChildren] = useState(0)
   const [numberOfRooms, setNumberOfRooms] = useState(1)
   const [totalGuests, setTotalGuests] = useState(2)
-
+  const [displayTotalGuests, setDisplayTotalGuests] = useState(2)
+  const [displayTotalRooms, setDisplayTotalRooms] = useState(1)
   const addAdult = () => {
     if (numberOfAdults < 6) {
       setNumberOfAdults(prev => prev + 1)
@@ -48,13 +49,21 @@ const AmountGuest = () => {
       setNumberOfRooms(prev => prev - 1)
     }
   }
+
+  const updateTotalStats = () => {
+    setDisplayTotalGuests(prev => (prev = totalGuests))
+    setDisplayTotalRooms(prev => (prev = numberOfRooms))
+  }
+
   const speaker = (
-    <Popover>
+    <Popover className={styles.popover}>
       <div className={styles.infoRow}>
-        <h3>Adults ADD APPLY BUTTON and REST</h3>
+        <h3>Adults</h3>
         <div className={styles.counter}>
           <IconButton icon={<MinusIcon />} circle size='lg' onClick={removeAdult} />
-          <span>{numberOfAdults}</span>
+          <div className={styles.numberDiv}>
+            <span>{numberOfAdults}</span>
+          </div>
           <IconButton icon={<PlusIcon />} circle size='lg' onClick={addAdult} />
         </div>
       </div>
@@ -62,7 +71,9 @@ const AmountGuest = () => {
         <h3>Children</h3>
         <div className={styles.counter}>
           <IconButton icon={<MinusIcon />} circle size='lg' onClick={removeChildren} />
-          <span>{numberOfChildren}</span>
+          <div className={styles.numberDiv}>
+            <span>{numberOfChildren}</span>
+          </div>
           <IconButton icon={<PlusIcon />} circle size='lg' onClick={addChildren} />
         </div>
       </div>
@@ -70,9 +81,20 @@ const AmountGuest = () => {
         <h3>Rooms</h3>
         <div className={styles.counter}>
           <IconButton icon={<MinusIcon />} circle size='lg' onClick={removeRoom} />
-          <span>{numberOfRooms}</span>
+          <div className={styles.numberDiv}>
+            <span>{numberOfRooms}</span>
+          </div>
           <IconButton icon={<PlusIcon />} circle size='lg' onClick={addRoom} />
         </div>
+      </div>
+      <hr></hr>
+      <div className={styles.buttonRow}>
+        <Button onClick={updateTotalStats} appearance='ghost'>
+          RESET
+        </Button>
+        <Button onClick={updateTotalStats} appearance='primary'>
+          APPLY
+        </Button>
       </div>
     </Popover>
   )
@@ -83,8 +105,8 @@ const AmountGuest = () => {
           <div className={styles.staticContainer}>
             <PeopleIcon size='1.75em' />
             <div className={styles.information}>
-              <p>{numberOfRooms} Room</p>
-              <p className={styles.guests}>{totalGuests} Guests</p>
+              <p>{displayTotalRooms} Room</p>
+              <p className={styles.guests}>{displayTotalGuests} Guests</p>
             </div>
           </div>
         </Button>

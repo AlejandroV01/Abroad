@@ -1,0 +1,11 @@
+.card {
+  display: flex;
+  align-items: center;
+  background-color: rgb(105, 137, 165);
+  margin-bottom: 25px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
