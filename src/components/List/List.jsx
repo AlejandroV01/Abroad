@@ -1,7 +1,7 @@
 import { CircularProgress, FormControl, Grid, InputLabel, MenuItem, Select, Typography } from '@mui/material'
+import axios from 'axios'
 import React from 'react'
 import styles from './List.module.css'
-
 const places = [
   {
     name: 'Manhattan Hotel',
@@ -18,31 +18,74 @@ const places = [
     price: 50,
     picture: 'https://imgcy.trivago.com/c_lfill,d_dummy.jpeg,e_sharpen:60,f_auto,h_225,q_auto,w_225/itemimages/69/11/69110_v4.jpeg',
   },
+  {
+    name: 'buba apt',
+    price: 1000000,
+    picture: 'https://imgcy.trivago.com/c_lfill,d_dummy.jpeg,e_sharpen:60,f_auto,h_225,q_auto,w_225/itemimages/69/11/69110_v4.jpeg',
+  },
 ]
 
-// const axios = require('axios')
+const options = {
+  method: 'GET',
+  url: 'https://hotels4.p.rapidapi.com/locations/v3/search',
+  params: { q: 'new york', locale: 'en_US', langid: '1033', siteid: '300000001' },
+  headers: {
+    'X-RapidAPI-Key': `${process.env.REACT_APP_RAPID_API_KEY}`,
+    'X-RapidAPI-Host': `${process.env.REACT_APP_RAPID_API_HOST}`,
+  },
+}
 
-// const options = {
-//   method: 'GET',
-//   url: 'https://hotels4.p.rapidapi.com/locations/v3/search',
-//   params: { q: 'new york', locale: 'en_US', langid: '1033', siteid: '300000001' },
-//   headers: {
-//     'X-RapidAPI-Key': '336b79b37bmsha10868f82387c93p13d5a6jsn4e81dcf082ce',
-//     'X-RapidAPI-Host': 'hotels4.p.rapidapi.com',
-//   },
-// }
+axios
+  .request(options)
+  .then(function (response) {
+    let data = response.data.sr
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].type === 'HOTEL') {
+        let newHotelObject = {
+          name: `${data[i].regionNames.shortName}`,
+          coords: { lat: parseFloat(data[i].coordinates.lat), lng: parseFloat(data[i].coordinates.long) },
+          hotelId: `${data[i].hotelId}`,
+          cityId: `${data[i].cityId}`,
+        }
+        console.log(data[i])
 
-// axios
-//   .request(options)
-//   .then(function (response) {
-//     let data = response.data.sr
-//     for (let i = 0; i < data.length; i++) {
-//       console.log(data[i])
-//     }
-//   })
-//   .catch(function (error) {
-//     console.error(error)
-//   })
+        const options = {
+          method: 'POST',
+          url: 'https://hotels4.p.rapidapi.com/properties/v2/get-offers',
+          headers: {
+            'content-type': 'application/json',
+            'X-RapidAPI-Key': `${process.env.REACT_APP_RAPID_API_KEY}`,
+            'X-RapidAPI-Host': `${process.env.REACT_APP_RAPID_API_HOST}`,
+          },
+          data: `{"currency":"USD","eapid":1,"locale":"en_US","siteId":${process.env.REACT_APP_SITE_ID},"propertyId":"${newHotelObject.hotelId}","checkInDate":{"day":11,"month":12,"year":2022},"checkOutDate":{"day":13,"month":12,"year":2022},"destination":{"coordinates":{"latitude":${newHotelObject.coords.lat},"longitude":${newHotelObject.coords.lng}},"regionId":"${newHotelObject.cityId}},"rooms":[{"adults":2,"children":[]}]}`,
+        }
+
+        axios
+          .request(options)
+          .then(function (response) {
+            console.log(
+              `{"currency":"USD","eapid":1,"locale":"en_US","siteId":${process.env.REACT_APP_SITE_ID},"propertyId":"${newHotelObject.hotelId}","checkInDate":{"day":11,"month":12,"year":2022},"checkOutDate":{"day":13,"month":12,"year":2022},"destination":{"coordinates":{"latitude":${newHotelObject.coords.lat},"longitude":${newHotelObject.coords.lng}},"regionId":"${newHotelObject.cityId}"},"rooms":[{"adults":2,"children":[]}]}`
+            )
+            console.log(response)
+            let data = response.data.data.propertyOffers
+            if (data.soldOut === true) {
+              alert('sold out')
+            }
+            newHotelObject = {
+              ...newHotelObject,
+              price: data.stickyBar.displayPrice,
+            }
+            console.log(newHotelObject)
+          })
+          .catch(function (error) {
+            console.error(error)
+          })
+      }
+    }
+  })
+  .catch(function (error) {
+    console.error(error)
+  })
 
 const List = () => {
   return (
